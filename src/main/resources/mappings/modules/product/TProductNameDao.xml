@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.manage.modules.product.dao.TProductNameDao">
+    
+	<sql id="tProductNameColumns">
+		a.id AS "id",
+		a.t_series_id AS "tSeriesId",
+		a.pro_code AS "proCode",
+		a.pro_name AS "proName",
+		a.sort AS "sort",
+		a.del_flag AS "delFlag",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="tProductNameJoins">
+		LEFT JOIN t_product_series b ON b.id = a.t_series_id
+	</sql>
+    
+	<select id="get" resultType="TProductName">
+		SELECT 
+			<include refid="tProductNameColumns"/>
+		FROM t_product_name a
+		<include refid="tProductNameJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="TProductName">
+		SELECT 
+			<include refid="tProductNameColumns"/>
+		FROM t_product_name a
+		<include refid="tProductNameJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="tSeriesId != null and tSeriesId != ''">
+				AND a.t_series_id = #{tSeriesId}
+			</if>
+			<if test="proCode != null and proCode != ''">
+				AND a.pro_code = #{proCode}
+			</if>
+			<if test="proName != null and proName != ''">
+				AND a.pro_name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{proName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{proName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{proName},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="TProductName">
+		SELECT 
+			<include refid="tProductNameColumns"/>
+		FROM t_product_name a
+		<include refid="tProductNameJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO t_product_name(
+			id,
+			t_series_id,
+			pro_code,
+			pro_name,
+			sort,
+			del_flag,
+			create_by,
+			create_date,
+			update_by,
+			update_date
+		) VALUES (
+			#{id},
+			#{tSeriesId},
+			#{proCode},
+			#{proName},
+			#{sort},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE t_product_name SET 	
+			t_series_id = #{tSeriesId},
+			pro_code = #{proCode},
+			pro_name = #{proName},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE t_product_name SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		<choose>
+			<when test="id !=null and id != ''">
+				WHERE id = #{id}
+			</when>
+			<otherwise>
+				WHERE t_series_id = #{tSeriesId}
+			</otherwise>
+		</choose>
+	</update>
+	
+</mapper>

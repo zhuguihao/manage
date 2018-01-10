@@ -96,6 +96,14 @@
     <example>${fns:getOfficeList()}</example>  
   </function>
   
+   <function>
+    <description>获取产品配置系列</description>
+    <name>getProSeriesList</name>
+    <function-class>com.thinkgem.manage.modules.sys.utils.UserUtils</function-class>
+    <function-signature>java.util.List getOfficeList()</function-signature>
+    <example>${fns:getOfficeList()}</example>  
+  </function>
+  
   <function>
     <description>获取当前用户缓存</description>
     <name>getCache</name>
