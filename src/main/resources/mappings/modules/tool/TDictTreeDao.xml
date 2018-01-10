@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.manage.modules.tool.dao.TDictTreeDao">
+    
+	<sql id="tDictTreeColumns">
+		a.id AS "id",
+		a.code AS "code",
+		a.value AS "value",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.parent_id AS "parent.id"
+	</sql>
+	
+	<sql id="tDictTreeJoins">
+	</sql>
+    
+	<select id="get" resultType="TDictTree">
+		SELECT 
+			<include refid="tDictTreeColumns"/>
+		FROM t_dict_tree a
+		<include refid="tDictTreeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="TDictTree">
+		SELECT 
+			<include refid="tDictTreeColumns"/>
+		FROM t_dict_tree a
+		<include refid="tDictTreeJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="TDictTree">
+		SELECT 
+			<include refid="tDictTreeColumns"/>
+		FROM t_dict_tree a
+		<include refid="tDictTreeJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO t_dict_tree(
+			id,
+			code,
+			value,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			parent_id
+		) VALUES (
+			#{id},
+			#{code},
+			#{value},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{parent.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE t_dict_tree SET 	
+			code = #{code},
+			value = #{value},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			parent_id = #{parent.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM t_dict_tree
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
